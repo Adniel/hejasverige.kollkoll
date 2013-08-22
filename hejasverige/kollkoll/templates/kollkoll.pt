@@ -1,0 +1,50 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="sv"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="hejasverige.kollkoll">
+
+<body>
+<metal:main fill-slot="content-core">
+    <tal:main-macro metal:define-macro="content-core">
+
+      <script type="text/javascript">
+          $(function(){
+            $('a#add-bank').prepOverlay({
+              subtype: 'ajax',
+              filter: '#content>*',
+              //formselector: 'form',
+              closeselector: '[name="form.button.Cancel"]',
+              noform: function(el) {return $.plonepopups.noformerrorshow(el, 'redirect');},
+              redirect: function () {
+                console.log('redirect', location.href);
+                return location.href;
+              },    
+              width:'30%'
+            });
+          });
+      </script>
+
+    	<div tal:replace="structure context/text/output" />
+        <a id="add-bank" tal:attributes="href string:${context/absolute_url}/@@add-bank" href="#">Lägg till</a>
+        <table cellpadding="10" border="0" class="listing nosort messageListing">
+              <thead>
+                <th>Bank</th>
+                <th/>
+              </thead>
+              <tbody>
+              <tal:boucle tal:repeat="item view/result">
+                  <tr>
+                    <td tal:content="item/name | nothing" />
+                    <td><a href="#" tal:attributes="href string:${context/absolute_url}/@@delete-bank?id=${item/id}" id="delete-card">Ta bort</a></td>
+                  </tr>
+              </tal:boucle>
+              </tbody>
+          </table>        
+    </tal:main-macro>
+</metal:main>
+
+</body>
+</html>

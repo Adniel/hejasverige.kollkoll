@@ -1,0 +1,48 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="hejasverige.content">
+<body>
+
+<metal:main fill-slot="main">
+    <metal:main define-macro="main">
+
+        <h1 class="documentFirstHeading">Bank</h1>
+        <form method="post" tal:attributes="action string:${context/absolute_url}/${view/__name__}">
+        <div class="documentDescription">Lägg till bank</div>
+          <dl>
+            <dt>
+              <label for="bank">Bank</label>
+              <select id="bank" name="bank">
+                <option>(Välj bank)</option>
+                <option
+                    tal:repeat="bank view/banks"
+                    tal:attributes="value bank/id"
+                    tal:content="bank/name"
+                    />
+              </select>
+            </dt>
+            <dt>
+              <label for="personal_id">Personnummer</label>
+              <input type="text" name="personal_id" tal:attributes="value view/pid" />
+            </dt>
+            <dt>
+              <label for="personal_code">Personlig kod</label>
+              <input type="password" name="personal_code" />
+            </dt>
+          </dl>
+          <div class="formControls">
+            <input class="context" type="submit" name="form.button.Cancel" value="Avbryt" />
+            <input class="context" type="submit" name="form.button.Add" value="Lägg till" />
+          </div>
+        </form>
+
+
+    </metal:main>
+</metal:main>
+
+</body>
+</html>

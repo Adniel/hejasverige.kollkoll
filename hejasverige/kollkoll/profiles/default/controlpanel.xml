@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<object
+    name="portal_controlpanel"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    i18n:domain="hejasverige.kollkoll"
+    purge="False">
+
+    <configlet
+        title="Kollkoll"
+        action_id="kollkoll"
+        appId="hejasverige.kollkoll"
+        category="Products"
+        condition_expr=""
+        url_expr="string:${portal_url}/@@kollkoll-settings"
+        visible="True"
+        i18n:attributes="title">
+            <permission>Manage portal</permission>
+    </configlet>
+
+</object>

@@ -1,0 +1,16 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="hejasverige.invitation">
+
+    <!-- Kollkoll permissions -->
+    <permission
+        id="hejasverige.ViewKollkoll"
+        title="HejaSverige: View Kollkoll"
+        />
+    <permission
+        id="hejasverige.AddKollkoll"
+        title="HejaSverige: Add Kollkoll"
+        />
+
+</configure>
