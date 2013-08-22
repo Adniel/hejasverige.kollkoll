@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <registry>
  <records interface="hejasverige.kollkoll.interfaces.IKollkollSettings">
- 	<value key="kollkoll_url"></value>
- 	<value key="kollkoll_user"></value>
- 	<value key="kollkoll_password"></value>
- 	<value key="kollkoll_timeout"></value>	
+ 	<value key="kollkoll_url">http://belomor.zapto.org:8080/WS</value>
+ 	<value key="kollkoll_user">admin</value>
+ 	<value key="kollkoll_password">admin</value>
+ 	<value key="kollkoll_timeout">10.0</value>	
  </records>
 </registry>
