@@ -63,7 +63,7 @@ class Kollkoll():
         logger.info("Kollkoll login")
         #import pdb; pdb.set_trace()
         url = self.url + '/' + LOGIN + '?uid=' + self.uid + '&pw=' + self.pw
-        logger.debug('login url: %s' % url)
+        logger.info('login url: %s' % url)
         headers = {'Accept': 'text/xml'}
 
         logger.info('Headers: ' + str(headers))
@@ -88,7 +88,7 @@ class Kollkoll():
             logger.info('Kollkoll returns: ' + r.text)
         except Exception, ex:
             logger.exception('Got exception: %s' % str(ex))
-            return
+            return {}
 
         return return_data
 
@@ -100,9 +100,13 @@ class Kollkoll():
         if list_all:
             url = self.url + '/' + LISTCARDS
         else:
-            url = self.url + '/' + LISTCARDS + '?uid=' + login.get('uid') + '&selecteduid=' + selecteduid + '&sessionid=' + login.get('sessionid')
+            if login:
+                url = self.url + '/' + LISTCARDS + '?uid=' + login.get('uid') + '&selecteduid=' + selecteduid + '&sessionid=' + login.get('sessionid')
+            else:
+                logger.error('Login method to Kollkoll failed')
+                return []
 
-        logger.debug('listCards url: %s' % url)
+        logger.info('listCards url: %s' % url)
         headers = {'Accept': 'text/xml'}
 
         logger.info('Headers: ' + str(headers))
@@ -134,35 +138,35 @@ class Kollkoll():
     def listUsers(self):
         logger.info("Kollkoll listUsers")
 
-        login = self.login()
-
-        url = self.url + '/' + LISTUSERS + '?uid=' + login.get('uid') + '&sessionid=' + login.get('sessionid')
-        logger.debug('listUsers url: %s' % url)
-        headers = {'Accept': 'text/xml'}
-
-        logger.info('Headers: ' + str(headers))
-        #import pdb; pdb.set_trace()
-        try:
-            result = requests.get(url,
-                             headers=headers,
-                             timeout=self.timeout
-                             )
-        except Exception, ex:
-            logger.exception('Got exception: %s' % str(ex))
-            return
-
         return_data = []
-        try:
-            xmldata = etree.parse(StringIO(result.text))
-            users = xmldata.xpath('//user')
-            for user in users:
-                return_data.append(dict(id=user.attrib['id'], uid=user.attrib['uid']))
+        login = self.login()
+        if login:
+            url = self.url + '/' + LISTUSERS + '?uid=' + login.get('uid') + '&sessionid=' + login.get('sessionid')
+            logger.info('listUsers url: %s' % url)
+            headers = {'Accept': 'text/xml'}
 
-            logger.info('Kollkoll status: ' + str(result.status_code))
-            logger.info('Kollkoll returns: ' + result.text)
-        except Exception, ex:
-            logger.exception('Got exception: %s' % str(ex))
-            return []
+            logger.info('Headers: ' + str(headers))
+            #import pdb; pdb.set_trace()
+            try:
+                result = requests.get(url,
+                                 headers=headers,
+                                 timeout=self.timeout
+                                 )
+            except Exception, ex:
+                logger.exception('Got exception: %s' % str(ex))
+                return
+
+            try:
+                xmldata = etree.parse(StringIO(result.text))
+                users = xmldata.xpath('//user')
+                for user in users:
+                    return_data.append(dict(id=user.attrib['id'], uid=user.attrib['uid']))
+
+                logger.info('Kollkoll status: ' + str(result.status_code))
+                logger.info('Kollkoll returns: ' + result.text)
+            except Exception, ex:
+                logger.exception('Got exception: %s' % str(ex))
+                return []
 
         return return_data
 
@@ -175,7 +179,7 @@ class Kollkoll():
         password = hashlib.sha224(binascii.b2a_hex(os.urandom(30))).hexdigest()
 
         url = self.url + '/' + ADDUSER + '?uid=' + uid + '&pw=' + password + '&fn=' + url_quote(fn) + '&ln=' + url_quote(ln) + '&email=' + url_quote(email)
-        logger.debug('addUser url: %s' % url)
+        logger.info('addUser url: %s' % url)
 
         headers = {'Accept': 'text/xml'}
 
@@ -205,29 +209,33 @@ class Kollkoll():
         logger.info("Kollkoll addCard")
         login = self.login()
 
-        url = self.url + '/' + ADDCARD + '?uid=' + login.get('uid') + '&pw=' + cpw + '&sessionid=' + login.get('sessionid') + '&selecteduid=' + uid + '&ctid=' + ctid + '&cuid=' + cuid
-        logger.debug('addCard url: %s' % url)
+        if login:
+            url = self.url + '/' + ADDCARD + '?uid=' + login.get('uid') + '&pw=' + cpw + '&sessionid=' + login.get('sessionid') + '&selecteduid=' + uid + '&ctid=' + ctid + '&cuid=' + cuid
+            logger.info('addCard url: %s' % url)
 
-        headers = {'Accept': 'text/xml'}
+            headers = {'Accept': 'text/xml'}
 
-        logger.info('Headers: ' + str(headers))
-        #import pdb; pdb.set_trace()
-        try:
-            result = requests.get(url,
-                             headers=headers,
-                             timeout=self.timeout
-                             )
-        except Exception, ex:
-            logger.exception('Got exception: %s' % str(ex))
-            return False
+            logger.info('Headers: ' + str(headers))
+            #import pdb; pdb.set_trace()
+            try:
+                result = requests.get(url,
+                                 headers=headers,
+                                 timeout=self.timeout
+                                 )
+            except Exception, ex:
+                logger.exception('Got exception: %s' % str(ex))
+                return False
 
-        try:
-            logger.info('Kollkoll status: ' + str(result.status_code))
-            logger.info('Kollkoll returns: ' + result.text)
-        except Exception, ex:
-            logger.exception('Got exception: %s' % str(ex))
+            try:
+                logger.info('Kollkoll status: ' + str(result.status_code))
+                logger.info('Kollkoll returns: ' + result.text)
+            except Exception, ex:
+                logger.exception('Got exception: %s' % str(ex))
 
-        return True
+            return True
+
+        logger.exception('Unable to login to Kollkoll')
+        return False
 
     def removeCard(self, uid, bid):
         """ Removes a card from a Kollkoll user
@@ -235,26 +243,30 @@ class Kollkoll():
         logger.info("Kollkoll removeCard")
         login = self.login()
 
-        url = self.url + '/' + REMOVECARD + '?uid=' + login.get('uid') + '&sessionid=' + login.get('sessionid') + '&selecteduid=' + uid + '&bid=' + bid
-        logger.debug('removeCard url: %s' % url)
+        if login:
+            url = self.url + '/' + REMOVECARD + '?uid=' + login.get('uid') + '&sessionid=' + login.get('sessionid') + '&selecteduid=' + uid + '&bid=' + bid
+            logger.info('removeCard url: %s' % url)
 
-        headers = {'Accept': 'text/xml'}
+            headers = {'Accept': 'text/xml'}
 
-        logger.info('Headers: ' + str(headers))
-        #import pdb; pdb.set_trace()
-        try:
-            result = requests.get(url,
-                             headers=headers,
-                             timeout=self.timeout
-                             )
-        except Exception, ex:
-            logger.exception('Got exception: %s' % str(ex))
-            return False
+            logger.info('Headers: ' + str(headers))
+            #import pdb; pdb.set_trace()
+            try:
+                result = requests.get(url,
+                                 headers=headers,
+                                 timeout=self.timeout
+                                 )
+            except Exception, ex:
+                logger.exception('Got exception: %s' % str(ex))
+                return False
 
-        try:
-            logger.info('Kollkoll status: ' + str(result.status_code))
-            logger.info('Kollkoll returns: ' + result.text)
-        except Exception, ex:
-            logger.exception('Got exception: %s' % str(ex))
+            try:
+                logger.info('Kollkoll status: ' + str(result.status_code))
+                logger.info('Kollkoll returns: ' + result.text)
+            except Exception, ex:
+                logger.exception('Got exception: %s' % str(ex))
 
-        return True
+            return True
+
+        logger.exception('Unable to login to Kollkoll')
+        return False
