@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import requests
-from collective.beaker.interfaces import ISession
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import ConnectionError
 from requests.exceptions import Timeout
@@ -75,7 +74,7 @@ class Kollkoll():
                              )
         except Exception, ex:
             logger.exception('Got exception: %s' % str(ex))
-            return
+            return {}
 
         return_data = {}
         try:
