@@ -45,7 +45,7 @@ class KollkollView(grok.View):
 
         pid = get_pid()
         self.result = kollkoll.listCards(pid)
-        
+
         session = ISession(self.request, None)
         session[SessionKeys.available_cards] = self.result
         session.save()
@@ -83,7 +83,7 @@ class AddBankView(grok.View):
                 url = self.return_url
             else:
                 url = self.context.absolute_url()
-            import pdb; pdb.set_trace()
+            #import pdb; pdb.set_trace()
             utils = getToolByName(self, "plone_utils")
             utils.addPortalMessage(_('Din inlogging registrerades'), 'info')
             return self.request.response.redirect(url)            
