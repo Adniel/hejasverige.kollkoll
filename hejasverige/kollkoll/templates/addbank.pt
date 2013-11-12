@@ -1,8 +1,8 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-      lang="en"
+      lang="sv"
       metal:use-macro="context/main_template/macros/master"
       i18n:domain="hejasverige.content">
 <body>
@@ -11,7 +11,7 @@
     <metal:main define-macro="main">
 
         <h1 class="documentFirstHeading">Bank</h1>
-        <form method="post" tal:attributes="action string:${context/absolute_url}/${view/__name__}">
+        <form method="post" tal:attributes="action string:${context/absolute_url}/${view/__name__}?return_url=${view/return_url}">
         <div class="documentDescription">Lägg till bank</div>
           <dl>
             <dt>
@@ -26,8 +26,9 @@
               </select>
             </dt>
             <dt>
-              <label for="personal_id">Personnummer</label>
-              <input type="text" name="personal_id" tal:attributes="value view/pid" />
+              <label for="personal_id">Användarnamn</label>
+              <!--input type="text" name="personal_id" tal:attributes="value view/pid" /-->
+              <input type="text" name="personal_id" />
             </dt>
             <dt>
               <label for="personal_code">Personlig kod</label>

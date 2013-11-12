@@ -6,12 +6,12 @@ from plone import api
 
 from zope.interface import Interface
 from collective.beaker.interfaces import ISession
+from hejasverige.kollkoll.config import SessionKeys
 
 from Products.CMFCore.utils import getToolByName
 from hejasverige.content.interfaces import IMyPages
 from hejasverige.kollkoll.interfaces import IKollkoll
 from hejasverige.kollkoll.kollkoll import Kollkoll
-from hejasverige.kollkoll.config import SessionKeys
 from hejasverige.kollkoll import _
 
 import logging
@@ -43,7 +43,9 @@ class KollkollView(grok.View):
         logger.debug('Generating view for kollkoll')
         kollkoll = Kollkoll()
 
-        self.result = kollkoll.listCards(get_pid())
+        pid = get_pid()
+        self.result = kollkoll.listCards(pid)
+        
         session = ISession(self.request, None)
         session[SessionKeys.available_cards] = self.result
         session.save()
@@ -66,6 +68,8 @@ class AddBankView(grok.View):
         '''
         self.pid = get_pid()
         #import pdb; pdb.set_trace()
+        self.return_url = self.request.get('return_url', None)
+
         if 'form.button.Add' in self.request.form:
             # Try Add card to koll koll
             kollkoll = Kollkoll()
@@ -74,6 +78,15 @@ class AddBankView(grok.View):
             cuid = self.request.form.get('personal_id', None)
             cpw = self.request.form.get('personal_code', None)
             self.result = kollkoll.addCard(uid, ctid, cuid, cpw)
+
+            if self.return_url:
+                url = self.return_url
+            else:
+                url = self.context.absolute_url()
+            import pdb; pdb.set_trace()
+            utils = getToolByName(self, "plone_utils")
+            utils.addPortalMessage(_('Din inlogging registrerades'), 'info')
+            return self.request.response.redirect(url)            
 
 
 class DeleteBankView(grok.View):
@@ -89,6 +102,8 @@ class DeleteBankView(grok.View):
         #import pdb; pdb.set_trace()
         session = ISession(self.request, None)
         card_id = self.request.get('id', None)
+        return_url = self.request.get('return_url', None)
+
         if card_id in [x.get('id') for x in session[SessionKeys.available_cards]]:
             kollkoll = Kollkoll()
             result = kollkoll.removeCard(uid=get_pid(), bid=card_id)
@@ -96,5 +111,9 @@ class DeleteBankView(grok.View):
             utils = getToolByName(self, "plone_utils")
             utils.addPortalMessage(_('Kort med angivet id saknas'), 'error')
 
-        url = self.context.absolute_url()
+        if return_url:
+            url = return_url
+        else:
+            url = self.context.absolute_url()
+
         return self.request.response.redirect(url)

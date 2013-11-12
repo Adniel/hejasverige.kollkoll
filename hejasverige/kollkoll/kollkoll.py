@@ -76,6 +76,11 @@ class Kollkoll():
             logger.exception('Got exception: %s' % str(ex))
             return {}
 
+        # Unable to login with configured credentials
+        if 'No user found with id:' in r.text:
+            logger.error('Unable to login to Kollkoll with the provided credentials. User: %s' % self.uid)
+            return {}
+
         return_data = {}
         try:
             xmldata = etree.parse(StringIO(r.text))

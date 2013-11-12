@@ -27,7 +27,7 @@
           });
       </script>
 
-    	<div tal:replace="structure context/text/output" />
+    	<div tal:replace="structure context/text/output | nothing" />
         <a id="add-bank" tal:attributes="href string:${context/absolute_url}/@@add-bank" href="#">Lägg till</a>
         <table cellpadding="10" border="0" class="listing nosort messageListing">
               <thead>
