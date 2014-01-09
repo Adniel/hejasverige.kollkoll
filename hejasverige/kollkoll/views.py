@@ -122,7 +122,7 @@ class DeleteBankView(grok.View):
                     utils.addPortalMessage(_('Din inlogging till ' + self.bank + ' togs bort'), 'info')                    
                 except Exception, ex:
                     utils.addPortalMessage(_('Det uppstod ett fel i samband med att din inloggning skulle tas bort'), 'error')
-                    self.logger.exception('Exception occured: %s' % str(e))
+                    logger.exception('Exception occured: %s' % str(e))
 
             else:
                 utils.addPortalMessage(_('Bank med angivet id saknas'), 'error')
