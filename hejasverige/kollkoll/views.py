@@ -119,7 +119,7 @@ class DeleteBankView(grok.View):
                 kollkoll = Kollkoll()
                 try:
                     result = kollkoll.removeCard(uid=get_pid(), bid=self.card_id)
-                    utils.addPortalMessage(_('Din inlogging till ' + self.bank + ' togs bort'), 'info')
+                    utils.addPortalMessage(_('Din inlogging till ' + self.bank['name'] + ' togs bort'), 'info')
                 except Exception, ex:
                     utils.addPortalMessage(_('Det uppstod ett fel i samband med att din inloggning skulle tas bort'), 'error')
                     logger.exception('Exception occured: %s' % str(ex))
