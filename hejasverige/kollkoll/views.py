@@ -83,37 +83,54 @@ class AddBankView(grok.View):
                 url = self.return_url
             else:
                 url = self.context.absolute_url()
-            #import pdb; pdb.set_trace()
             utils = getToolByName(self, "plone_utils")
             utils.addPortalMessage(_('Din inlogging registrerades'), 'info')
-            return self.request.response.redirect(url)            
+            return self.request.response.redirect(url)
+
 
 
 class DeleteBankView(grok.View):
     grok.context(IKollkoll)
     grok.name('delete-bank')
     grok.require('hejasverige.ViewKollkoll')
-    #grok.template('addbank')
+    grok.template('deletebank')
     #grok.implements(IMyPages)
 
-    def render(self):
-        ''' Nothing
+    def update(self):
+        ''' Shows confirmation view before removing bank
         '''
         #import pdb; pdb.set_trace()
         session = ISession(self.request, None)
-        card_id = self.request.get('id', None)
-        return_url = self.request.get('return_url', None)
+        self.card_id = self.request.get('id', None)
+        self.return_url = self.request.get('return_url', None)
+        available_cards = {}
+        for card in session[SessionKeys.available_cards]:
+            available_cards[card['id']] = card    
+        self.bank = available_cards[self.card_id]
 
-        if card_id in [x.get('id') for x in session[SessionKeys.available_cards]]:
-            kollkoll = Kollkoll()
-            result = kollkoll.removeCard(uid=get_pid(), bid=card_id)
-        else:
+        #import pdb; pdb.set_trace()
+
+
+        button_ok = self.request.form.get('form.button.Ok') or None
+        if button_ok:
             utils = getToolByName(self, "plone_utils")
-            utils.addPortalMessage(_('Kort med angivet id saknas'), 'error')
 
-        if return_url:
-            url = return_url
-        else:
-            url = self.context.absolute_url()
+            if self.card_id in [x.get('id') for x in session[SessionKeys.available_cards]]:
+                kollkoll = Kollkoll()
+                try:
+                    result = kollkoll.removeCard(uid=get_pid(), bid=self.card_id)
+                    utils.addPortalMessage(_('Din inlogging till ' + self.bank + ' togs bort'), 'info')                    
+                except Exception, ex:
+                    utils.addPortalMessage(_('Ett fel inträffade när inloggning skulle tas bort'), 'error')
+                    self.logger.exception('Exception occured: %s' % str(e))
 
-        return self.request.response.redirect(url)
+            else:
+                utils.addPortalMessage(_('Bank med angivet id saknas'), 'error')
+
+            if self.return_url and self.return_url != 'None':
+                url = self.return_url
+            else:
+                url = self.context.absolute_url()
+    
+
+            return self.request.response.redirect(url)

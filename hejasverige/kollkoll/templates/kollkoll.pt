@@ -25,10 +25,25 @@
               width:'30%'
             });
           });
+          $(function(){
+            $('a#delete-bank').prepOverlay({
+              subtype: 'ajax',
+              filter: '#content>*',
+              //formselector: 'form',
+              closeselector: '[name="form.button.Cancel"]',
+              noform: function(el) {return $.plonepopups.noformerrorshow(el, 'redirect');},
+              redirect: function () {
+                console.log('redirect', location.href);
+                return location.href;
+              },    
+              width:'30%'
+            });
+          });
+
       </script>
 
     	<div tal:replace="structure context/text/output | nothing" />
-        <a id="add-bank" tal:attributes="href string:${context/absolute_url}/@@add-bank" href="#">Lägg till</a>
+        <a id="add-bank" tal:attributes="href string:${context/absolute_url}/@@add-bank?return_url=" href="#">Lägg till</a>
         <table cellpadding="10" border="0" class="listing nosort messageListing">
               <thead>
                 <th>Bank</th>
@@ -38,7 +53,7 @@
               <tal:boucle tal:repeat="item view/result">
                   <tr>
                     <td tal:content="item/name | nothing" />
-                    <td><a href="#" tal:attributes="href string:${context/absolute_url}/@@delete-bank?id=${item/id}" id="delete-card">Ta bort</a></td>
+                    <td><a href="#" tal:attributes="href string:${context/absolute_url}/@@delete-bank?id=${item/id}" id="delete-bank">Ta bort</a></td>
                   </tr>
               </tal:boucle>
               </tbody>
