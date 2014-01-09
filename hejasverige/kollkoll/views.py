@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from five import grok
-from plone.app.layout.navigation.interfaces import INavigationRoot
+#from plone.app.layout.navigation.interfaces import INavigationRoot
 from plone import api
 
-from zope.interface import Interface
+#from zope.interface import Interface
 from collective.beaker.interfaces import ISession
 from hejasverige.kollkoll.config import SessionKeys
 
@@ -119,10 +119,10 @@ class DeleteBankView(grok.View):
                 kollkoll = Kollkoll()
                 try:
                     result = kollkoll.removeCard(uid=get_pid(), bid=self.card_id)
-                    utils.addPortalMessage(_('Din inlogging till ' + self.bank + ' togs bort'), 'info')                    
+                    utils.addPortalMessage(_('Din inlogging till ' + self.bank + ' togs bort'), 'info')
                 except Exception, ex:
                     utils.addPortalMessage(_('Det uppstod ett fel i samband med att din inloggning skulle tas bort'), 'error')
-                    logger.exception('Exception occured: %s' % str(e))
+                    logger.exception('Exception occured: %s' % str(ex))
 
             else:
                 utils.addPortalMessage(_('Bank med angivet id saknas'), 'error')
