@@ -11,7 +11,7 @@
     <metal:main define-macro="main">
 
         <h1 class="documentFirstHeading">Bank</h1>
-        <form method="post" tal:attributes="action string:${context/absolute_url}/${view/__name__}?return_url=${view/return_url}">
+        <form method="post" autocomplete="off" tal:attributes="action string:${context/absolute_url}/${view/__name__}?return_url=${view/return_url}">
         <div class="documentDescription">Lägg till bank</div>
           <dl>
             <dt>
